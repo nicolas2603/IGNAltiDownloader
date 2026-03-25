@@ -1,0 +1,40 @@
+[general]
+name=IGNAltiDownloader
+qgisMinimumVersion=3.16
+description=Téléchargement des MNT/MNS/MNH IGN (RGE ALTI 1m et LiDAR HD 50cm)
+version=1.0
+author=Nicolas Lieutenant
+email=nicolas2603@gmail.com
+
+supportsQt6=True
+
+about=Plugin permettant de télécharger les données altimétriques de l'IGN.
+
+    Sources disponibles :
+    - RGE ALTI 1m - Modèle numérique de terrain
+    - LiDAR HD MNT 50cm - Modèle numérique de terrain
+    - LiDAR HD MNS 50cm - Surface avec végétation/bâtiments
+    - LiDAR HD MNH 50cm - Hauteur du sursol
+
+    Fonctionnalités :
+    - Sélection d'emprise par coordonnées Lambert 93
+    - Récupération de l'emprise depuis la vue ou une couche
+    - Cache local intelligent (évite les re-téléchargements)
+    - Fusion VRT automatique des dalles
+	- Calcul de pente
+    - Chargement direct dans QGIS après téléchargement
+	
+	 Copyright(C) 2025 Nicolas Lieutenant. Licence GPL-3.0-or-later.
+
+
+tags=dem,mnt,mns,mnh,ign,rge alti,lidar,altimetrie,elevation,france
+
+category=Raster
+icon=icons/ign_alti.svg
+
+experimental=False
+deprecated=False
+
+hasProcessingProvider=no
+
+license=GPL-3.0-or-later

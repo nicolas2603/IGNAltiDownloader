@@ -1,0 +1,562 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>RgeAltiDialog</class>
+ <widget class="QDialog" name="RgeAltiDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>500</width>
+    <height>903</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>IGNAltiDownloader</string>
+  </property>
+  <property name="styleSheet">
+   <string>
+QLineEdit { 
+    padding: 6px; 
+    border: 1px solid #bdc3c7; 
+    border-radius: 4px; 
+}
+QLineEdit:focus { 
+    border: 2px solid #3498db; 
+    border-radius: 4px; 
+}
+QComboBox { 
+    padding: 5px; 
+    border: 1px solid #bdc3c7; 
+    border-radius: 4px; 
+}
+QComboBox:focus { 
+    border: 2px solid #3498db; 
+    border-radius: 4px; 
+}
+QSpinBox { 
+    padding: 5px; 
+    border: 1px solid #bdc3c7; 
+    border-radius: 4px; 
+}
+QSpinBox:focus { 
+    border: 2px solid #3498db; 
+    border-radius: 4px; 
+}
+   </string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>12</number>
+   </property>
+   <property name="leftMargin">
+    <number>16</number>
+   </property>
+   <property name="topMargin">
+    <number>12</number>
+   </property>
+   <property name="rightMargin">
+    <number>16</number>
+   </property>
+   <property name="bottomMargin">
+    <number>12</number>
+   </property>
+   <item>
+    <widget class="QFrame" name="headerFrame">
+     <property name="styleSheet">
+      <string>QFrame { background-color: #f0f0f0; border-radius: 8px; padding: 8px; }</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="headerLayout">
+      <item>
+       <widget class="QLabel" name="titleLabel">
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; font-weight:600; color:#2c3e50;&quot;&gt;IGN Alti Downloader&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="descriptionLabel">
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p style=&quot;color:#7f8c8d;&quot;&gt;Téléchargement des données altimétriques IGN (RGE ALTI, LiDAR HD)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="sourceGroupBox">
+     <property name="styleSheet">
+      <string>QGroupBox { font-weight: bold; color: #34495e; border: 2px solid #bdc3c7; border-radius: 8px; margin-top: 1ex; padding-top: 10px; }
+QGroupBox::title { subcontrol-origin: margin; left: 10px; padding: 0 5px 0 5px; }</string>
+     </property>
+     <property name="title">
+      <string>Source de données</string>
+     </property>
+     <layout class="QVBoxLayout" name="sourceLayout">
+      <item>
+       <widget class="QComboBox" name="sourceComboBox">
+        <property name="styleSheet">
+         <string>QComboBox { padding: 5px; border: 1px solid #bdc3c7; border-radius: 4px; }
+QComboBox:focus { border: 2px solid #3498db; }</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="showGridCheckBox">
+        <property name="styleSheet">
+         <string>QCheckBox { color: #9b59b6; font-weight: bold; }</string>
+        </property>
+        <property name="text">
+         <string>Afficher la grille de mosaïquage</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="extentGroupBox">
+     <property name="styleSheet">
+      <string>QGroupBox { font-weight: bold; color: #34495e; border: 2px solid #bdc3c7; border-radius: 8px; margin-top: 1ex; padding-top: 10px; }
+QGroupBox::title { subcontrol-origin: margin; left: 10px; padding: 0 5px 0 5px; }</string>
+     </property>
+     <property name="title">
+      <string>Emprise à télécharger (Lambert 93)</string>
+     </property>
+     <layout class="QVBoxLayout" name="extentLayout">
+      <item>
+       <layout class="QGridLayout" name="coordsGridLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="xminLabel">
+          <property name="text">
+           <string>X min :</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QSpinBox" name="xminSpinBox">
+          <property name="minimum">
+           <number>100000</number>
+          </property>
+          <property name="maximum">
+           <number>1300000</number>
+          </property>
+          <property name="singleStep">
+           <number>1000</number>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QLabel" name="xmaxLabel">
+          <property name="text">
+           <string>X max :</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3">
+         <widget class="QSpinBox" name="xmaxSpinBox">
+          <property name="minimum">
+           <number>100000</number>
+          </property>
+          <property name="maximum">
+           <number>1300000</number>
+          </property>
+          <property name="singleStep">
+           <number>1000</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="yminLabel">
+          <property name="text">
+           <string>Y min :</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QSpinBox" name="yminSpinBox">
+          <property name="minimum">
+           <number>6000000</number>
+          </property>
+          <property name="maximum">
+           <number>7200000</number>
+          </property>
+          <property name="singleStep">
+           <number>1000</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QLabel" name="ymaxLabel">
+          <property name="text">
+           <string>Y max :</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="QSpinBox" name="ymaxSpinBox">
+          <property name="minimum">
+           <number>6000000</number>
+          </property>
+          <property name="maximum">
+           <number>7200000</number>
+          </property>
+          <property name="singleStep">
+           <number>1000</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="extentButtonsLayout">
+        <item>
+         <widget class="QPushButton" name="useCurrentExtentButton">
+          <property name="styleSheet">
+           <string>QPushButton {
+    background-color: #95a5a6;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    font-weight: bold;
+    border-radius: 4px;
+}
+QPushButton:hover {
+    background-color: #7f8c8d;
+}</string>
+          </property>
+          <property name="text">
+           <string>📍 Emprise vue</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="useLayerExtentButton">
+          <property name="styleSheet">
+           <string>QPushButton {
+    background-color: #95a5a6;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    font-weight: bold;
+    border-radius: 4px;
+}
+QPushButton:hover {
+    background-color: #7f8c8d;
+}</string>
+          </property>
+          <property name="text">
+           <string>📐 Depuis couche</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="useSelectionButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="styleSheet">
+           <string>QPushButton {
+    background-color: #9b59b6;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    font-weight: bold;
+    border-radius: 4px;
+}
+QPushButton:hover {
+    background-color: #8e44ad;
+}
+QPushButton:disabled {
+    background-color: #bdc3c7;
+    color: #7f8c8d;
+}</string>
+          </property>
+          <property name="text">
+           <string>✓ Sélection</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QLabel" name="dallesInfoLabel">
+        <property name="styleSheet">
+         <string>QLabel { color: #27ae60; font-weight: bold; }</string>
+        </property>
+        <property name="text">
+         <string>Dalles : 0 (0 x 0)</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="optionsGroupBox">
+     <property name="styleSheet">
+      <string>QGroupBox { font-weight: bold; color: #34495e; border: 2px solid #bdc3c7; border-radius: 8px; margin-top: 1ex; padding-top: 10px; }
+QGroupBox::title { subcontrol-origin: margin; left: 10px; padding: 0 5px 0 5px; }</string>
+     </property>
+     <property name="title">
+      <string>Options de téléchargement</string>
+     </property>
+     <layout class="QVBoxLayout" name="optionsLayout">
+      <item>
+       <widget class="QCheckBox" name="skipCacheCheckBox">
+        <property name="styleSheet">
+         <string>QCheckBox { color: #2c3e50; }</string>
+        </property>
+        <property name="text">
+         <string>✓ Ignorer les dalles déjà en cache</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="loadAfterCheckBox">
+        <property name="styleSheet">
+         <string>QCheckBox { color: #2c3e50; }</string>
+        </property>
+        <property name="text">
+         <string>✓ Charger dans QGIS après téléchargement</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="createVrtCheckBox">
+        <property name="styleSheet">
+         <string>QCheckBox { color: #e67e22; font-weight: bold; }</string>
+        </property>
+        <property name="text">
+         <string>Fusionner en un seul fichier brut (VRT)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="smoothMntCheckBox">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string>QCheckBox { color: #16a085; }</string>
+        </property>
+        <property name="text">
+         <string>Fusionner en un seul fichier lissé (GeoTIFF)</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="slopeGroupBox">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="styleSheet">
+      <string>QGroupBox { font-weight: bold; color: #34495e; border: 2px solid #bdc3c7; border-radius: 8px; margin-top: 1ex; padding-top: 10px; }
+QGroupBox::title { subcontrol-origin: margin; left: 10px; padding: 0 5px 0 5px; }</string>
+     </property>
+     <property name="title">
+      <string>Calcul de pente (MNT uniquement)</string>
+     </property>
+     <layout class="QVBoxLayout" name="slopeLayout">
+      <item>
+       <widget class="QCheckBox" name="calculateSlopeCheckBox">
+        <property name="styleSheet">
+         <string>QCheckBox { color: #2c3e50; }</string>
+        </property>
+        <property name="text">
+         <string>Calculer la pente</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="slopePercentCheckBox">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="styleSheet">
+         <string>QCheckBox { color: #2c3e50; }</string>
+        </property>
+        <property name="text">
+         <string>Pente exprimée en pourcentage (par défaut en degrés)</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="cacheGroupBox">
+     <property name="styleSheet">
+      <string>QGroupBox { font-weight: bold; color: #34495e; border: 2px solid #bdc3c7; border-radius: 8px; margin-top: 1ex; padding-top: 10px; }
+QGroupBox::title { subcontrol-origin: margin; left: 10px; padding: 0 5px 0 5px; }</string>
+     </property>
+     <property name="title">
+      <string>Dossier de cache</string>
+     </property>
+     <layout class="QVBoxLayout" name="cacheLayout">
+      <item>
+       <layout class="QHBoxLayout" name="cacheDirLayout">
+        <item>
+         <widget class="QLineEdit" name="cacheDirLineEdit">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+          <property name="placeholderText">
+           <string>Dossier de stockage des dalles...</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="browseCacheButton">
+          <property name="maximumSize">
+           <size>
+            <width>40</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string>QPushButton {
+    background-color: #95a5a6;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+}
+QPushButton:hover {
+    background-color: #7f8c8d;
+}</string>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QLabel" name="cacheSizeLabel">
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt; font-style:italic; color:#7f8c8d;&quot;&gt;Taille du cache : calcul en cours...&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QFrame" name="progressFrame">
+     <property name="styleSheet">
+      <string>QFrame { background-color: #ecf0f1; border-radius: 6px; padding: 8px; }</string>
+     </property>
+     <layout class="QVBoxLayout" name="progressLayout">
+      <item>
+       <widget class="QProgressBar" name="progressBar">
+        <property name="styleSheet">
+         <string>QProgressBar {
+    border: 1px solid #bdc3c7;
+    border-radius: 4px;
+    text-align: center;
+    background-color: #ecf0f1;
+}
+QProgressBar::chunk {
+    background-color: #3498db;
+    border-radius: 3px;
+}</string>
+        </property>
+        <property name="value">
+         <number>0</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="statusLabel">
+        <property name="styleSheet">
+         <string>QLabel { color: #7f8c8d; }</string>
+        </property>
+        <property name="text">
+         <string>Prêt</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="downloadButton">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>50</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string>QPushButton {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 10pt;
+    font-weight: bold;
+    border-radius: 6px;
+}
+QPushButton:hover {
+    background-color: #2980b9;
+}
+QPushButton:pressed {
+    background-color: #21618c;
+}
+QPushButton:disabled {
+    background-color: #bdc3c7;
+    color: #7f8c8d;
+}</string>
+     </property>
+     <property name="text">
+      <string>Télécharger les dalles</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>icons/ign_alti.svg</normaloff>icons/ign_alti.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>32</width>
+       <height>32</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
