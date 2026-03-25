@@ -1,4 +1,4 @@
-# IGN Alti Downloader
+# IGNAltiDownloader - Plugin QGIS
 
 Plugin QGIS pour télécharger les données altimétriques de l'IGN (RGE ALTI et LiDAR HD).
 
@@ -34,11 +34,6 @@ Télécharger des dalles altimétriques, c'est un processus qui peut s'optimiser
 2. Dans QGIS : Extensions > Installer/Gérer les extensions > Installer depuis un ZIP
 3. Activer le plugin dans la liste des extensions
 
-Ou copier le dossier `IGNAltiDownloader` dans :
-- Windows : `%APPDATA%\QGIS\QGIS3\profiles\default\python\plugins\`
-- Linux : `~/.local/share/QGIS/QGIS3/profiles/default/python/plugins/`
-- macOS : `~/Library/Application Support/QGIS/QGIS3/profiles/default/python/plugins/`
-
 ## Utilisation
 
 1. Cliquer sur l'icône dans la barre d'outils ou menu Raster > IGNAltiDownloader
@@ -55,11 +50,12 @@ Cocher "Afficher la grille de mosaïquage" permet de visualiser les dalles sur l
 
 On peut sélectionner les dalles à la main avec l'outil de sélection QGIS, puis cliquer sur "Sélection" pour définir l'emprise.
 
-## Dépendances
+## Compatibilité
 
-- QGIS 3.16+
-- GDAL (inclus avec QGIS)
-- NumPy (inclus avec QGIS)
+- **QGIS** : 3.16 - 3.99
+- **Qt** : Qt5 et Qt6
+- **Python** : 3.7+
+- **Plateformes** : Windows, Linux, macOS
 
 ## Limitations
 
@@ -73,7 +69,3 @@ GPL-3.0 - Voir [LICENSE](LICENSE)
 ## Auteur
 
 Nicolas Lieutenant
-
----
-
-*Ce plugin utilise les services WMS de l'IGN via data.geopf.fr*
