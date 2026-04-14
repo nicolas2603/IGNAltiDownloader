@@ -11,6 +11,7 @@ Copyright (C) 2026
 
 import os
 import shutil
+import ssl
 from pathlib import Path
 from urllib.request import urlopen, Request
 from urllib.error import URLError, HTTPError
@@ -616,6 +617,9 @@ class RgeAltiDialog(QDialog, FORM_CLASS):
         
         is_lidar = "LHD" in prefix
         
+        # Liste pour collecter les erreurs
+        error_details = []
+        
         for x in range(xmin, xmax, 1000):
             for y in range(ymin, ymax, 1000):
                 x_km = x // 1000
@@ -648,7 +652,7 @@ class RgeAltiDialog(QDialog, FORM_CLASS):
                         bbox_xmax = x + 1000
                         bbox_ymax = y + 1000
                     
-                    success = self._download_tile(
+                    success, error_msg = self._download_tile(
                         bbox_xmin, bbox_ymin, bbox_xmax, bbox_ymax,
                         cache_path, pixels
                     )
@@ -658,9 +662,32 @@ class RgeAltiDialog(QDialog, FORM_CLASS):
                         self.downloaded_files.append(cache_path)
                     else:
                         errors += 1
+                        error_details.append(f"{dalle_id}: {error_msg}")
                 
                 self.progressBar.setValue(self.progressBar.value() + 1)
                 QApplication.processEvents()
+        
+        # Afficher un résumé des erreurs
+        if errors > 0:
+            QgsMessageLog.logMessage(f"=== {errors} erreurs sur {total} dalles ===", "IGN Alti", Qgis.Warning)
+            
+            # Compter les types d'erreurs
+            error_types = {}
+            for err in error_details:
+                err_type = err.split(": ", 1)[1] if ": " in err else err
+                error_types[err_type] = error_types.get(err_type, 0) + 1
+            
+            for err_type, count in error_types.items():
+                QgsMessageLog.logMessage(f"  - {err_type}: {count} dalles", "IGN Alti", Qgis.Warning)
+            
+            # Popup si beaucoup d'erreurs
+            if errors > 5:
+                error_summary = "\n".join([f"• {err_type}: {count}" for err_type, count in error_types.items()])
+                QMessageBox.warning(
+                    self,
+                    f"Erreurs de téléchargement ({errors}/{total})",
+                    f"Plusieurs dalles n'ont pas pu être téléchargées:\n\n{error_summary}\n\nVoir Journal des messages > IGN Alti"
+                )
         
         # Fusionner si demandé (VRT ou GeoTIFF lissé)
         merged_file = None
@@ -735,7 +762,7 @@ class RgeAltiDialog(QDialog, FORM_CLASS):
         self.downloadButton.setText("Télécharger les dalles")
     
     def _download_tile(self, xmin, ymin, xmax, ymax, output_path, pixels=1000):
-        """Télécharge une dalle via WMS."""
+        """Télécharge une dalle via WMS. Retourne (success, error_message)."""
         params = {
             "SERVICE": "WMS",
             "VERSION": "1.3.0",
@@ -751,35 +778,61 @@ class RgeAltiDialog(QDialog, FORM_CLASS):
         
         url = self.wms_base_url + "?" + "&".join(f"{k}={v}" for k, v in params.items())
         
+        # Contexte SSL pour éviter les erreurs de certificat
+        ssl_context = ssl.create_default_context()
+        ssl_context.check_hostname = False
+        ssl_context.verify_mode = ssl.CERT_NONE
+        
         try:
             req = Request(url)
             req.add_header('User-Agent', 'QGIS IGN Alti Downloader Plugin')
             
-            with urlopen(req, timeout=60) as response:
+            with urlopen(req, timeout=60, context=ssl_context) as response:
                 content_type = response.headers.get('Content-Type', '')
                 
-                if 'xml' in content_type.lower() or 'html' in content_type.lower():
-                    return False
+                if 'xml' in content_type.lower():
+                    error_content = response.read().decode('utf-8', errors='ignore')
+                    QgsMessageLog.logMessage(f"Réponse XML: {error_content[:500]}", "IGN Alti", Qgis.Warning)
+                    return (False, "Réponse XML (erreur serveur)")
+                
+                if 'html' in content_type.lower():
+                    return (False, "Réponse HTML (erreur serveur)")
                 
                 temp_path = output_path + ".tmp"
                 with open(temp_path, 'wb') as f:
                     f.write(response.read())
+                
+                if os.path.getsize(temp_path) < 1000:
+                    os.remove(temp_path)
+                    return (False, "Fichier trop petit")
                 
                 self._fix_georeferencing(temp_path, output_path, xmin, ymin, xmax, ymax)
                 
                 if os.path.exists(temp_path):
                     os.remove(temp_path)
                 
-                return True
-                
+                return (True, None)
+        
+        except HTTPError as e:
+            error_msg = f"HTTP {e.code}: {e.reason}"
+            QgsMessageLog.logMessage(f"{error_msg} - {url}", "IGN Alti", Qgis.Warning)
+            return (False, error_msg)
+        
+        except URLError as e:
+            error_msg = f"URLError: {str(e.reason)}"
+            QgsMessageLog.logMessage(f"{error_msg}", "IGN Alti", Qgis.Warning)
+            return (False, error_msg)
+        
         except Exception as e:
-            QgsMessageLog.logMessage(f"Erreur: {str(e)}", "IGN Alti", Qgis.Warning)
-            return False
+            error_msg = f"{type(e).__name__}: {str(e)}"
+            QgsMessageLog.logMessage(f"Erreur: {error_msg}", "IGN Alti", Qgis.Warning)
+            return (False, error_msg)
     
     def _fix_georeferencing(self, input_path, output_path, xmin, ymin, xmax, ymax):
         """Corrige le géoréférencement du fichier téléchargé."""
         try:
             from osgeo import gdal, osr
+            gdal.UseExceptions()
             
             src_ds = gdal.Open(input_path)
             if src_ds is None:
@@ -812,6 +865,7 @@ class RgeAltiDialog(QDialog, FORM_CLASS):
         """Crée un fichier VRT à partir des dalles."""
         try:
             from osgeo import gdal
+            gdal.UseExceptions()
             vrt = gdal.BuildVRT(output_path, files)
             vrt = None
             QgsMessageLog.logMessage(f"VRT créé : {output_path}", "IGN Alti", Qgis.Info)
@@ -825,6 +879,7 @@ class RgeAltiDialog(QDialog, FORM_CLASS):
         try:
             from osgeo import gdal
             import numpy as np
+            gdal.UseExceptions()
             
             # Créer un VRT temporaire pour fusionner
             temp_vrt = output_path.replace('.tif', '_temp.vrt')
@@ -953,6 +1008,7 @@ class RgeAltiDialog(QDialog, FORM_CLASS):
         """Calcule la pente d'un MNT avec GDAL."""
         try:
             from osgeo import gdal
+            gdal.UseExceptions()
             
             base_name = os.path.splitext(input_path)[0]
             output_path = f"{base_name}_pente.tif"
